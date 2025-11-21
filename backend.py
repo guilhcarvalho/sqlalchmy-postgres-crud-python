@@ -10,10 +10,10 @@ _engine = create_engine(
     'postgres:admin@'
     'localhost:5432/'
     'cadastros_postgresql'
-)
+) #Faz a conexão com o banco de dados postgreSQL
 
 
-class Registrations(Base):
+class Registrations(Base): #Cria a tabela 'clients' no banco de dados
     __tablename__ = 'clients'
     id = Column(Integer, primary_key=True)
     name = Column(String, unique=True)
@@ -35,47 +35,50 @@ class Crud():
         '''Cria novos registros no banco de dados'''
         name = input('Name: ')
         cpf = input('CPF: ')
-        with _Session() as session:
+        if len(cpf) == 11 and cpf.isdigit():
             try:
-                data = Registrations(name=name, cpf=cpf)
-                session.add(data)
-                session.commit()
-                print('Successfull')
+                with _Session() as session:
+                    data = Registrations(name=name, cpf=cpf)
+                    session.add(data)
+                    session.commit()
+                    print('Successfull')
             except IntegrityError as e:
                 session.rollback()
                 print(f'Dados já cadastrados: {e}')
+        else:
+            print('Invalid CPF')
 
     def read_one(self):
         '''Busca um registro especifico, optando por ID, Nome ou CPF'''
         try:
             busca = input('Query by: [1]ID, [2]Name or [3]CPF: ')
-            if busca == '1':
+            if busca == '1': #Realiza a busca através do ID digitado
                 query_id = int(input('ID: '))
                 try:
                     with _Session() as session:
                         data = session.query(Registrations).filter_by(id=query_id).first()
-                        print(f'<ID: {data.id} // Name: {data.name} // CPF: {data.cpf}>')
-                except ValueError as e:
-                    print(f'Erro: {e}')
-                    return None
-            elif busca == '2':
+                        print(f'> ID: {data.id} // Name: {data.name} // CPF: '
+                              f'{data.cpf[:3]}.{data.cpf[3:6]}.{data.cpf[6:9]}-{data.cpf[9:]}')
+                except Exception:
+                    print('ID não encontrado')
+            elif busca == '2': #Realiza a busca através do Nome digitado
                 query_name = input('Name: ')
                 try:
                     with _Session() as session:
                         data = session.query(Registrations).filter_by(name=query_name).first()
-                        print(f'<ID: {data.id} // Name: {data.name} // CPF: {data.cpf}>')
-                except Exception as e:
-                    print(f'Erro: {e}')
-                    return None
-            elif busca == '3':
+                        print(f'> ID: {data.id} // Name: {data.name} // CPF: '
+                              f'{data.cpf[:3]}.{data.cpf[3:6]}.{data.cpf[6:9]}-{data.cpf[9:]}')
+                except Exception:
+                    print('Nome não encontrado.')
+            elif busca == '3': #Realiza a busca através do CPF digitado
                 query_cpf = input('CPF: ')
                 try:
                     with _Session() as session:
                         data = session.query(Registrations).filter_by(cpf=query_cpf).first()
-                        print(f'<ID: {data.id} // Name: {data.name} // CPF: {data.cpf}>')
-                except Exception as e:
-                    print(f'Erro: {e}')
-                    return None
+                        print(f'> ID: {data.id} // Name: {data.name} // CPF: '
+                              f'{data.cpf[:3]}.{data.cpf[3:6]}.{data.cpf[6:9]}-{data.cpf[9:]}')
+                except Exception:
+                    print('CPF não encontrado.')
             else:
                 print('Select a correct option.')
         except ValueError as e:
@@ -87,7 +90,8 @@ class Crud():
             with _Session() as session:
                 data = session.query(Registrations).all()
                 for clients in data:
-                    print(f'<ID: {clients.id} // Name: {clients.name} // CPF: {clients.cpf}>')
+                    print(f'> ID: {clients.id} // Name: {clients.name} // CPF: '
+                          f'{clients.cpf[:3]}.{clients.cpf[3:6]}.{clients.cpf[6:9]}-{clients.cpf[9:]}')
         except Exception as e:
             print(f'Erro {e}')
             return None
@@ -96,22 +100,23 @@ class Crud():
         '''Atualiza name, cpf de um registro  pelo id no banco de dados'''
         try:
             id = input('ID: ')
-            name = input('Name: ')
-            cpf = input('cpf: ')
+            name = input('New name: ')
+            cpf = input('New cpf: ')
             with _Session() as session:
                 data = session.query(Registrations).filter_by(id=id).first()
                 data.name = name
                 data.cpf = cpf
                 session.commit()
                 print('Successfull')
+                
         except Exception as e:
             print(f'Erro: {e}')
             return None
 
     def delete_data(self):
         '''Deleta um registro especifico informado pelo id no banco de dados'''
-        id = input('ID: ')
         try:
+            id = input('ID: ')
             with _Session() as session:
                 data = session.query(Registrations).filter_by(id=id).first()
                 session.delete(data)

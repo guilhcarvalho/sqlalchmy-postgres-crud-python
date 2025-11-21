@@ -1,5 +1,4 @@
 from backend import Crud, _Session
-import time
 import os
 
 
@@ -16,21 +15,24 @@ def main():
         menu = input('Select an option: ')
         backend_operation = Crud(_Session)
         if menu == '1':
-            backend_operation.create()
-            time.sleep(2)
             os.system('cls')
+            print('='*10+' '+'New client registration'+' '+'=' * 10)
+            backend_operation.create()
             continue
         elif menu == '2':
+            print('='*25+' '+'Client'+' '+'=' * 25)
             backend_operation.read_one()
-            time.sleep(2)
-            os.system('cls')
             continue
         elif menu == '3':
+            os.system('cls')
+            print('='*25+' '+'Clients'+' '+'=' * 25)
             backend_operation.read_all()
             continue
         elif menu == '4':
+            print('='*25+' '+'Update'+' '+'=' * 25)
             backend_operation.update_data()
             continue
         elif menu == '5':
+            print('='*25+' '+'Delete'+' '+'=' * 25)
             backend_operation.delete_data()
 main()
