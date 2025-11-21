@@ -8,5 +8,7 @@ ao criar um container do PostgreSQL nele e se criar noções básicas sobre o Do
 A ideia foi refatorar meu projeto CRUD com SQLite, dar uma enxutada nele e praticar esses novos recursos.
 
 O projeto foi dividido em dois arquivos:
+
 • main.py - Que é onde acontece a interação com o terminal, executando as ações do CRUD
+
 • backend.py - Responsável pela conexão com o postgresql, criação da tabela e toda a lógica por trás do CRUD criado.
